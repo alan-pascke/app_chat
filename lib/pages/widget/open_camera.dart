@@ -75,7 +75,7 @@ class _OpenCameraState extends State<OpenCamera> {
     return ListView(
       children: [
         SizedBox(
-          height: 650,
+          height: 700,
           width: MediaQuery.of(context).size.width,
           child: imagem == null
               ? _cameraPreviewWidget()

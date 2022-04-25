@@ -91,6 +91,7 @@ class _ChatScreenState extends State<ChatScreen> {
                       child: StreamBuilder(
                         stream: FirebaseFirestore.instance
                             .collection('messages')
+                            .where('text', isNull: false)
                             .snapshots(),
                         builder:
                             (context, AsyncSnapshot<QuerySnapshot> snapshot) {
@@ -101,27 +102,30 @@ class _ChatScreenState extends State<ChatScreen> {
                                 child: CircularProgressIndicator(),
                               );
                             default:
-                              snapshot.data!.docs.reversed.toList();
+                              return ListView(
+                                  padding: const EdgeInsets.only(bottom: 15),
+                                  // itemCount: snapshot.data!.size,
+                                  reverse: false,
+                                  // itemBuilder: (context, index) {
+                                  children: snapshot.data!.docs
+                                      .map((DocumentSnapshot document) {
+                                    Map<String, dynamic> datas = document
+                                        .data()! as Map<String, dynamic>;
 
-                              return ListView.builder(
-                                padding: const EdgeInsets.only(bottom: 15),
-                                itemCount: snapshot.data!.size,
-                                reverse: true,
-                                itemBuilder: (context, index) {
-                                  return ListTile(
-                                    title: Container(
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(7),
-                                        color: Colors.grey[300],
+                                    return ListTile(
+                                      title: Container(
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(7),
+                                          color: Colors.grey[300],
+                                        ),
+                                        padding: const EdgeInsets.all(10),
+                                        child: Text(datas['text']),
                                       ),
-                                      padding: const EdgeInsets.all(10),
-                                      child: Text(
-                                        snapshot.data!.docs[index]['text'],
-                                      ),
-                                    ),
-                                  );
-                                },
-                              );
+                                    );
+                                  }).toList());
+                            // },
+
                           }
                         },
                       ),
