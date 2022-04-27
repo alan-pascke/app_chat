@@ -1,5 +1,6 @@
 // ignore_for_file: avoid_print, must_be_immutable
 
+import 'package:app_chat/pages/chat_message.dart';
 import 'package:app_chat/pages/widget/text_composer.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -75,7 +76,7 @@ class _ChatScreenState extends State<ChatScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('n do contato'),
+        title: const Text('contacts name'),
         elevation: 0,
       ),
       body: SafeArea(
@@ -91,7 +92,6 @@ class _ChatScreenState extends State<ChatScreen> {
                       child: StreamBuilder(
                         stream: FirebaseFirestore.instance
                             .collection('messages')
-                            .where('text', isNull: false)
                             .snapshots(),
                         builder:
                             (context, AsyncSnapshot<QuerySnapshot> snapshot) {
@@ -102,30 +102,21 @@ class _ChatScreenState extends State<ChatScreen> {
                                 child: CircularProgressIndicator(),
                               );
                             default:
-                              return ListView(
-                                  padding: const EdgeInsets.only(bottom: 15),
-                                  // itemCount: snapshot.data!.size,
-                                  reverse: false,
-                                  // itemBuilder: (context, index) {
-                                  children: snapshot.data!.docs
-                                      .map((DocumentSnapshot document) {
-                                    Map<String, dynamic> datas = document
-                                        .data()! as Map<String, dynamic>;
-
-                                    return ListTile(
-                                      title: Container(
-                                        decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(7),
-                                          color: Colors.grey[300],
-                                        ),
-                                        padding: const EdgeInsets.all(10),
-                                        child: Text(datas['text']),
-                                      ),
-                                    );
-                                  }).toList());
-                            // },
-
+                              List<DocumentSnapshot> documents =
+                                  snapshot.data!.docs.reversed.toList();
+                              return ListView.builder(
+                                padding: const EdgeInsets.only(bottom: 15),
+                                itemCount: documents.length,
+                                reverse: true,
+                                itemBuilder: (context, index) {
+                                  return ListTile(
+                                    title: ChatMessage(
+                                      documents[index].data()
+                                          as Map<String, dynamic>,
+                                    ),
+                                  );
+                                },
+                              );
                           }
                         },
                       ),

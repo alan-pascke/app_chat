@@ -1,13 +1,13 @@
 import 'package:app_chat/pages/chat_screen.dart';
 import 'package:flutter/material.dart';
 
-// ignore: must_be_immutable
 class SubTitleField extends StatefulWidget {
-  SubTitleField({Key? key, this.sendImage, this.sendSubtitle})
+  const SubTitleField({Key? key, this.sendImage, this.sendSubtitle})
       : super(key: key);
   //
-  Function()? sendImage;
-  Function({String text})? sendSubtitle;
+
+  final Function()? sendImage;
+  final Function({String text})? sendSubtitle;
 
   @override
   State<SubTitleField> createState() => _SubTitleFieldState();
@@ -32,14 +32,20 @@ class _SubTitleFieldState extends State<SubTitleField> {
               ),
               onChanged: (text) {
                 widget.sendSubtitle!(text: text);
-                _controller.clear();
               },
             ),
           ),
           IconButton(
+            icon: const Icon(
+              Icons.send,
+            ),
             onPressed: () {
-              widget.sendImage!() ||
-                  widget.sendSubtitle!(text: _controller.text);
+              if (_controller.text.isEmpty) {
+                widget.sendImage!();
+              } else {
+                widget.sendImage!();
+                widget.sendSubtitle!(text: _controller.text);
+              }
               _controller.clear();
               setState(() {
                 Navigator.push(
@@ -48,9 +54,6 @@ class _SubTitleFieldState extends State<SubTitleField> {
                 );
               });
             },
-            icon: const Icon(
-              Icons.send,
-            ),
           )
         ],
       ),

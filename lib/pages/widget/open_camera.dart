@@ -71,7 +71,7 @@ class _OpenCameraState extends State<OpenCamera> {
     }
   }
 
-  _arquivoWidget() {
+  _showImage() {
     return ListView(
       children: [
         SizedBox(
@@ -79,23 +79,19 @@ class _OpenCameraState extends State<OpenCamera> {
           width: MediaQuery.of(context).size.width,
           child: imagem == null
               ? _cameraPreviewWidget()
-              : Image.file(File(imagem!.path), fit: BoxFit.contain),
+              : Image.file(File(imagem!.path), fit: BoxFit.cover),
         ),
-        Stack(
+        Container(
           alignment: Alignment.bottomCenter,
-          children: [
-            Container(
-              decoration: BoxDecoration(
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.grey.withOpacity(.8),
-                    blurRadius: 1,
-                  ),
-                ],
+          decoration: BoxDecoration(
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey.withOpacity(.2),
+                blurRadius: 1,
               ),
-              child: SubTitleField(sendImage: _sendImageOrMessage),
-            ),
-          ],
+            ],
+          ),
+          child: SubTitleField(sendImage: _sendImageOrMessage),
         ),
       ],
     );
@@ -159,7 +155,7 @@ class _OpenCameraState extends State<OpenCamera> {
             icon: const Icon(Icons.cameraswitch_outlined),
             color: Colors.white,
             iconSize: 30,
-            onPressed: () => trocaCamera()),
+            onPressed: () => changeCamera()),
       ),
     );
   }
@@ -196,7 +192,7 @@ class _OpenCameraState extends State<OpenCamera> {
     }
   }
 
-  trocaCamera() {
+  changeCamera() {
     if (direction == CameraLensDirection.front) {
       direction = CameraLensDirection.back;
     } else if (direction == CameraLensDirection.back) {
@@ -211,7 +207,7 @@ class _OpenCameraState extends State<OpenCamera> {
       body: Container(
         color: Colors.black,
         child: Center(
-          child: _arquivoWidget(),
+          child: _showImage(),
         ),
       ),
       // floatingActionButton: (imagem != null)
