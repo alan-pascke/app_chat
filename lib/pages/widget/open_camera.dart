@@ -2,16 +2,23 @@
 
 import 'dart:io';
 
+// import 'package:app_chat/pages/google_user.dart';
+import 'package:app_chat/pages/models/input_data.dart';
+// import 'package:app_chat/pages/models/user_data.dart';
 import 'package:app_chat/pages/widget/subtitle_field.dart';
 import 'package:camera/camera.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import 'package:firebase_core/firebase_core.dart' as firebase_core;
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 
 class OpenCamera extends StatefulWidget {
-  const OpenCamera({Key? key}) : super(key: key);
+  OpenCamera({Key? key, this.getUser, this.currentUser}) : super(key: key);
+
+  User? getUser;
+  User? currentUser;
 
   @override
   _OpenCameraState createState() => _OpenCameraState();
@@ -238,6 +245,8 @@ class _OpenCameraState extends State<OpenCamera> {
         };
 
         if (text != null) data['text'] = text;
+
+        PutData(data);
 
         FirebaseFirestore.instance.collection('messages').add(data);
       }

@@ -47,7 +47,7 @@ class _TextComposerState extends State<TextComposer> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => const OpenCamera(),
+                  builder: (context) => OpenCamera(),
                   fullscreenDialog: true,
                 ),
               );

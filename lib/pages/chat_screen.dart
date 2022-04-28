@@ -1,14 +1,19 @@
 // ignore_for_file: avoid_print, must_be_immutable
 
 import 'package:app_chat/pages/chat_message.dart';
+import 'package:app_chat/pages/google_user.dart';
+import 'package:app_chat/pages/models/input_data.dart';
 import 'package:app_chat/pages/widget/text_composer.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:google_sign_in/google_sign_in.dart';
+// import 'package:google_sign_in/google_sign_in.dart';
 
 class ChatScreen extends StatefulWidget {
-  const ChatScreen({Key? key}) : super(key: key);
+  ChatScreen({Key? key, this.getUser, this.currentUser}) : super(key: key);
+
+  Future? getUser;
+  User? currentUser;
 
   @override
   State<ChatScreen> createState() => _ChatScreenState();
@@ -17,39 +22,38 @@ class ChatScreen extends StatefulWidget {
 class _ChatScreenState extends State<ChatScreen> {
   FirebaseFirestore db = FirebaseFirestore.instance;
 
-  final GoogleSignIn googleSignIn = GoogleSignIn();
-  User? _currentUser;
+  // final GoogleSignIn googleSignIn = GoogleSignIn();
 
   @override
   void initState() {
     super.initState();
     FirebaseAuth.instance.authStateChanges().listen((user) {
-      _currentUser = user;
+      widget.currentUser = user;
     });
   }
 
-  Future<User?> _getUser() async {
-    if (_currentUser != null) return _currentUser!;
+  // Future<User?> _getUser() async {
+  //   if (_currentUser != null) return _currentUser!;
 
-    try {
-      final GoogleSignInAccount? googleSignInAccount =
-          await googleSignIn.signIn();
-      final GoogleSignInAuthentication googleSignInAuthentication =
-          await googleSignInAccount!.authentication;
-      final AuthCredential credential = GoogleAuthProvider.credential(
-          idToken: googleSignInAuthentication.idToken,
-          accessToken: googleSignInAuthentication.accessToken);
-      final UserCredential authResult =
-          await FirebaseAuth.instance.signInWithCredential(credential);
-      final User user = authResult.user!;
-      return user;
-    } catch (e) {
-      return null;
-    }
-  }
+  //   try {
+  //     final GoogleSignInAccount? googleSignInAccount =
+  //         await googleSignIn.signIn();
+  //     final GoogleSignInAuthentication googleSignInAuthentication =
+  //         await googleSignInAccount!.authentication;
+  //     final AuthCredential credential = GoogleAuthProvider.credential(
+  //         idToken: googleSignInAuthentication.idToken,
+  //         accessToken: googleSignInAuthentication.accessToken);
+  //     final UserCredential authResult =
+  //         await FirebaseAuth.instance.signInWithCredential(credential);
+  //     final User user = authResult.user!;
+  //     return user;
+  //   } catch (e) {
+  //     return null;
+  //   }
+  // }
 
   void _sendMessage({String? text}) async {
-    final User? user = await _getUser();
+    final User? user = await widget.getUser;
     if (user == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -61,15 +65,18 @@ class _ChatScreenState extends State<ChatScreen> {
         ),
       );
     }
+    PutData? putData;
+    putData!.getData(user);
+    Map<String, dynamic>? data = putData.data;
+    // {
+    //   'uid': user!.uid,
+    //   'senderName': user.displayName,
+    //   'userPhotoUrl': user.photoURL,
+    // };
+    if (text != null) data!['text'] = text;
+    db.collection('messages').add(data!);
 
-    Map<String, dynamic> data = {
-      'uid': user!.uid,
-      'senderName': user.displayName,
-      'userPhotoUrl': user.photoURL,
-    };
-    // if (widget.urlImage != null) data['imgUrl'] = widget.urlImage;
-    if (text != null) data['text'] = text;
-    db.collection('messages').add(data);
+    PutData(data);
   }
 
   @override

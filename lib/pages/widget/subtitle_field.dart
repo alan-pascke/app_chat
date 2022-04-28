@@ -50,7 +50,7 @@ class _SubTitleFieldState extends State<SubTitleField> {
               setState(() {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const ChatScreen()),
+                  MaterialPageRoute(builder: (context) => ChatScreen()),
                 );
               });
             },
